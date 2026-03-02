@@ -1,0 +1,499 @@
+﻿<!DOCTYPE html>
+<html lang="th">
+
+<head>
+  <meta charset="UTF-8" />
+  <style>
+    @font-face {
+      font-family: 'Sarabun';
+      src: url('https://fonts.gstatic.com/s/sarabun/v13/DtVjJx26TKEr37c9aBVJmg.ttf') format('truetype');
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Sarabun', Arial, sans-serif;
+      font-size: 10pt;
+      line-height: 1.3;
+      color: #000;
+    }
+
+    .page {
+      width: 210mm;
+      min-height: 297mm;
+      padding: 2mm;
+      background: #fff;
+    }
+
+    .header-container {
+      display: flex;
+      align-items: center;
+      gap: 5mm;
+      margin-bottom: 3mm;
+    }
+
+    .header-logo img {
+      height: 56px;
+      width: auto;
+    }
+
+    .company-header {
+      flex: 1;
+    }
+
+    .company-header-thai {
+      background-color: #1a3a52;
+      color: #fff;
+      padding: 2mm 5mm;
+      text-align: center;
+      margin-bottom: 1mm;
+    }
+
+    .company-header-thai p {
+      font-size: 13pt;
+      font-weight: bold;
+    }
+
+    .company-header-english {
+      background-color: #8f4e3b;
+      color: #fff;
+      padding: 2mm 5mm;
+      text-align: center;
+      margin-top: -4px;
+    }
+
+    .company-header-english h1 {
+      font-size: 13pt;
+      font-weight: bold;
+    }
+
+    .company-info {
+      font-size: 8.8pt;
+      line-height: 1.25;
+      text-align: center;
+      margin-bottom: 3mm;
+    }
+
+    .doc-details {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 3mm;
+      font-size: 10pt;
+    }
+
+    .doc-details td {
+      border: 1px solid #000;
+      padding: 1mm 1.2mm;
+      vertical-align: top;
+      font-weight: 400;
+    }
+
+    .work-type-box {
+      text-align: center;
+      vertical-align: middle !important;
+    }
+
+    .work-type-box .th {
+      font-size: 12pt;
+      font-weight: bold;
+      line-height: 1.1;
+    }
+
+    .work-type-box .en {
+      font-size: 10pt;
+      font-weight: bold;
+      line-height: 1.1;
+    }
+
+    .tax-row {
+      width: 100%;
+      text-align: center;
+      font-size: 10pt;
+      margin-bottom: 2.5mm;
+    }
+
+    .tax-check {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin: 0 10px;
+    }
+
+    .box {
+      width: 11px;
+      height: 11px;
+      border: 1px solid #000;
+      display: inline-block;
+      position: relative;
+      top: 1px;
+    }
+
+    .box.checked::after {
+      content: "";
+      position: absolute;
+      left: 2px;
+      top: 0px;
+      width: 5px;
+      height: 8px;
+      border: solid #000;
+      border-width: 0 1.5px 1.5px 0;
+      transform: rotate(45deg);
+    }
+
+    .main-table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+      margin-bottom: 5mm;
+      font-size: 10pt;
+    }
+
+    .main-table th,
+    .main-table td {
+      border: 1px solid #000;
+      padding: 1.5mm 1.8mm;
+      vertical-align: top;
+      overflow-wrap: break-word;
+      word-wrap: break-word;
+    }
+
+    .main-table th {
+      text-align: center;
+      font-weight: bold;
+      font-size: 9.2pt;
+      line-height: 1.2;
+      background: #f8f8f8;
+    }
+
+    .col-item {
+      width: 8%;
+      text-align: center;
+    }
+
+    .col-desc {
+      width: 47%;
+    }
+
+    .col-qty {
+      width: 15%;
+      text-align: right;
+    }
+
+    .col-price {
+      width: 15%;
+      text-align: right;
+    }
+
+    .col-amount {
+      width: 15%;
+      text-align: right;
+    }
+
+    .text-center {
+      text-align: center;
+    }
+
+    .text-right {
+      text-align: right;
+    }
+
+    .empty-row td {
+      height: 7mm;
+    }
+
+    .summary-blank {
+      background: #fff;
+    }
+
+    .summary-thai {
+      font-size: 10pt;
+      text-align: center;
+      vertical-align: middle !important;
+      font-style: italic;
+      padding: 2.8mm;
+      line-height: 1.45;
+    }
+
+    .summary-label {
+      text-align: left;
+      font-size: 10pt;
+      vertical-align: middle !important;
+    }
+
+    .summary-percent {
+      text-align: center;
+      font-size: 10pt;
+      vertical-align: middle !important;
+    }
+
+    .summary-value {
+      text-align: right;
+      font-size: 10pt;
+      vertical-align: middle !important;
+    }
+
+    .summary-grand .summary-label,
+    .summary-grand .summary-value {
+      font-weight: bold;
+    }
+
+    .signatures {
+      display: flex;
+      justify-content: space-between;
+      gap: 2mm;
+      margin-top: 7mm;
+      margin-bottom: 4mm;
+    }
+
+    .sig-box {
+      flex: 1;
+      text-align: center;
+      font-size: 9pt;
+    }
+
+    .sig-line {
+      border-bottom: 1px solid #000;
+      height: 14mm;
+      margin-bottom: 2mm;
+      width: 84%;
+      margin-left: auto;
+      margin-right: auto;
+      position: relative;
+    }
+
+    .sig-line img {
+      max-height: 13mm;
+      max-width: 100%;
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .sig-label {
+      font-weight: normal;
+      margin-top: 1mm;
+    }
+
+    .payment-terms {
+      font-size: 10pt;
+      text-align: center;
+      margin: 2mm 0 2mm;
+    }
+
+    .conditions {
+      font-size: 9pt;
+      line-height: 1.35;
+      margin-top: 1.5mm;
+      margin-bottom: 2mm;
+    }
+
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      font-size: 8.8pt;
+      border-top: 1px solid #ddd;
+      margin-top: 2mm;
+      padding-top: 2mm;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+    <div class="header-container">
+      <div class="header-logo">
+        <% if (logo) { %>
+          <img src="<%= logo %>" alt="Company Logo" />
+        <% } else { %>
+          <h2>EXPERTEAM</h2>
+        <% } %>
+      </div>
+      <div class="company-header">
+        <div class="company-header-thai">
+          <p>บริษัท เอ็กเพิททีม จำกัด</p>
+        </div>
+        <div class="company-header-english">
+          <h1><%= companyName %></h1>
+        </div>
+      </div>
+    </div>
+
+    <div class="company-info">
+      <p><%= companyAddress %></p>
+      <p>โทรศัพท์: <%= phone %>, โทรสาร: <%= fax %> Email: <%= email %>, Website: <%= website %></p>
+    </div>
+
+    <table class="doc-details">
+      <tr>
+        <td style="width: 30%;">
+          <strong>งาน Job:</strong><br>
+          <%= jobName %>
+        </td>
+        <td rowspan="3" class="work-type-box" style="width: 20%;">
+          <div class="th">ใบสั่งจ้าง</div>
+          <div class="en">WORK ORDER</div>
+        </td>
+        <td style="width: 20%;">
+          <strong>เลขที่ใบสั่งซื้อ</strong><br>
+          <%= woNumber %>
+        </td>
+        <td style="width: 30%;">
+          <strong>วันที่</strong><br>Date :<br>
+          <%= date %>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2">
+          <strong>สถานที่ ( Location )</strong><br>
+          <%= deliveryLocation || 'ยังไม่ระบุ' %>
+        </td>
+        <td>
+          <strong>Project code :</strong><br>
+          <%= projectCode %>
+        </td>
+        <td>
+          <strong>C.C. No.</strong><br>
+          <%= ccNo %>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2">
+          <strong>Trader :</strong><br>
+          <%= trader %>
+        </td>
+        <td>
+          <strong>Job No.</strong><br>
+          <%= jobNo %>
+        </td>
+        <td>
+          <strong>Purchase by :</strong><br>
+          <%= purchaseBy || 'ยังไม่ระบุ' %>
+        </td>
+      </tr>
+    </table>
+
+    <div class="tax-row">
+      <span>อัตราภาษี</span>
+      <span class="tax-check"><span class="box checked"></span><span>ร้อยละ 7</span></span>
+      <span class="tax-check"><span class="box"></span><span>ร้อยละ 0</span></span>
+    </div>
+
+    <table class="main-table">
+      <thead>
+        <tr>
+          <th class="col-item">ลำดับ<br>ITEM</th>
+          <th class="col-desc">รายการสินค้า<br>DESCRIPTION</th>
+          <th class="col-qty">จำนวน : หน่วย<br>QUANTITY UNIT</th>
+          <th class="col-price">หน่วยละ<br>UNIT PRICE</th>
+          <th class="col-amount">ราคารวม<br>AMOUNT</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% items.forEach((item, index) => { %>
+          <tr>
+            <td class="col-item"><%= index + 1 %></td>
+            <td class="col-desc"><%= item.description %></td>
+            <td class="col-qty"><%= parseFloat(item.quantity || 0).toFixed(2) %> <%= item.unit || '' %></td>
+            <td class="col-price"><%= parseFloat(item.unitPrice || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %></td>
+            <td class="col-amount"><%= parseFloat(item.amount || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %></td>
+          </tr>
+        <% }); %>
+
+        <% for (let i = items.length; i < 10; i++) { %>
+          <tr class="empty-row">
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+          </tr>
+        <% } %>
+
+        <tr>
+          <td class="summary-blank"></td>
+          <td class="summary-thai" rowspan="6">(<%= grandTotalText || 'ศูนย์บาทถ้วน' %>)</td>
+          <td class="summary-label" colspan="2">รวมราคา</td>
+          <td class="summary-value"><%= parseFloat(subTotal).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %></td>
+        </tr>
+        <tr>
+          <td class="summary-blank"></td>
+          <td class="summary-label" colspan="2">หัก ส่วนลด</td>
+          <td class="summary-value">0.00</td>
+        </tr>
+        <tr>
+          <td class="summary-blank"></td>
+          <td class="summary-label">หัก ภาษี ณ ที่จ่าย</td>
+          <td class="summary-percent"><%= withholdingPercent %>%</td>
+          <td class="summary-value"><%= parseFloat(withholding).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %></td>
+        </tr>
+        <tr>
+          <td class="summary-blank"></td>
+          <td class="summary-label" colspan="2">รวมราคาหลังหัก</td>
+          <td class="summary-value"><%= parseFloat(subAfterWithholding).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %></td>
+        </tr>
+        <tr>
+          <td class="summary-blank"></td>
+          <td class="summary-label" colspan="2">จำนวนภาษีมูลค่าเพิ่ม <%= vatPercent %>%</td>
+          <td class="summary-value"><%= parseFloat(vat).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %></td>
+        </tr>
+        <tr class="summary-grand">
+          <td class="summary-blank"></td>
+          <td class="summary-label" colspan="2">จำนวนเงินทั้งสิ้น</td>
+          <td class="summary-value"><%= parseFloat(grandTotal).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="signatures">
+      <div class="sig-box">
+        <div class="sig-line">
+          <% if (sig1) { %><img src="<%= sig1 %>" alt="signature"><% } %>
+        </div>
+        <div class="sig-label">ผู้สั่งซื้อ</div>
+      </div>
+      <div class="sig-box">
+        <div class="sig-line">
+          <% if (sig2) { %><img src="<%= sig2 %>" alt="signature"><% } %>
+        </div>
+        <div class="sig-label">Project / Originator</div>
+      </div>
+      <div class="sig-box">
+        <div class="sig-line">
+          <% if (sig3) { %><img src="<%= sig3 %>" alt="signature"><% } %>
+        </div>
+        <div class="sig-label">Store</div>
+      </div>
+      <div class="sig-box">
+        <div class="sig-line"></div>
+        <div class="sig-label">ผู้อนุมัติ</div>
+      </div>
+    </div>
+
+    <div class="payment-terms">
+      <strong>เงื่อนไขการชำระเงิน:</strong> <%= remark || 'เครดิต 30 Days' %>
+    </div>
+
+    <div class="conditions">
+      <div>เงื่อนไข 1) โปรดระบุเลขที่ใบสั่งซื้อ ในใบเสร็จรับเงิน / ใบกำกับภาษี หรือ ใบเสนอราคา ทุกครั้งเพื่อสะดวกในการอ้างอิงและชำระเงิน</div>
+      <div>2) เมื่อรับใบสั่งซื้อถือว่ายอมรับเงื่อนไขข้างต้น และเงื่อนไขที่แนบมาด้วย</div>
+      <div>3) โปรดแนบใบสั่งซื้อ สำเนา เมื่อมาวางบิลเรียกเก็บเงิน</div>
+    </div>
+
+    <div class="footer">
+      <div>
+        <p>Page <%= page %></p>
+      </div>
+      <div>
+        <p><%= formCode %></p>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

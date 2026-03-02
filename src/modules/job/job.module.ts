@@ -1,0 +1,16 @@
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Job } from './entity/job.entity';
+import { Trader } from '../trader/entity/trader.entity';
+import { JobService } from './job.service';
+import { JobController } from './job.controller';
+
+@Module({
+  imports: [
+    TypeOrmModule.forFeature([Job, Trader]), 
+  ],
+  providers: [JobService],
+  controllers: [JobController],
+  exports: [JobService],
+})
+export class JobModule {}
