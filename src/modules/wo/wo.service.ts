@@ -35,52 +35,43 @@ export class WoService {
     private readonly dataSource: DataSource,
   ) { }
 
-  /** เธชเธฃเนเธฒเธเน€เธฅเธ WO เธญเธฑเธ•เนเธเธกเธฑเธ•เธด - เนเธเน transaction + lock เน€เธเธทเนเธญเธเนเธญเธเธเธฑเธเน€เธฅเธเธเนเธณ */
+  /** Generate WO number in format 0000/YY (Gregorian year short). */
   private async generateWoNumber(queryRunner: QueryRunner): Promise<string> {
-    console.log('๐”’ เน€เธฃเธดเนเธก generate WO Number เธเธฃเนเธญเธก pessimistic lock');
-
     const currentYear = new Date().getFullYear();
-    const yearShort = String(currentYear).slice(-2);
+    const yearFull = String(currentYear);
+    const yearShort = yearFull.slice(-2);
 
-      // เธฅเนเธญเธเนเธ–เธงเธฅเนเธฒเธชเธธเธ”เน€เธเธทเนเธญเธเนเธญเธเธเธฑเธ race condition
-    const lastWo = await queryRunner.manager
+    // Lock candidate rows to reduce race conditions when creating numbers concurrently.
+    const candidateRows = await queryRunner.manager
       .createQueryBuilder(Wo, 'wo')
-      .where('wo.woNumber LIKE :pattern', { pattern: `WO%/${yearShort}%` })
-      .orderBy('wo.woNumber', 'DESC')
+      .where(
+        '(wo.woNumber LIKE :newFormat OR wo.woNumber LIKE :legacyFormat)',
+        {
+          newFormat: `%/${yearFull}`,
+          legacyFormat: `%/${yearShort}%`,
+        },
+      )
       .setLock('pessimistic_write')
-      .getOne();
+      .getMany();
 
-    let baseSeq = 1;
-    let dailySeq = 1;
+    let nextSeq = 1;
+    for (const row of candidateRows) {
+      const value = row.woNumber || '';
+      // Supports both legacy: WO0004/26-03 and new: 0004/2026
+      const match = value.match(/^(?:WO)?(\d{4})\/(\d{2,4})(?:-\d{2})?$/);
+      if (!match) continue;
 
-    if (lastWo && lastWo.woNumber) {
-      // เธ”เธถเธ baseSeq เธเธฒเธ WOxxxx/
-      const matchBase = lastWo.woNumber.match(/WO(\d{4})\//);
-      if (matchBase) {
-        baseSeq = parseInt(matchBase[1], 10);
-      }
+      const seq = Number(match[1]);
+      const yearToken = match[2];
+      const isCurrentYear =
+        yearToken === yearFull || yearToken === yearShort;
 
-      // เธเธณเธเธงเธ“ dailySeq
-      const today = new Date().toISOString().split('T')[0];
-      const lastDatePart = lastWo.createdAt?.toISOString().split('T')[0];
-
-      if (lastDatePart === today) {
-        // เธงเธฑเธเน€เธ”เธตเธขเธงเธเธฑเธ โ’ เน€เธเธดเนเธก dailySeq
-        const matchDaily = lastWo.woNumber.match(/-(\d{2})$/);
-        if (matchDaily) {
-          dailySeq = parseInt(matchDaily[1], 10) + 1;
-        }
-      } else {
-        // เธงเธฑเธเนเธซเธกเน โ’ เน€เธเธดเนเธก baseSeq เนเธฅเธฐ reset dailySeq
-        baseSeq += 1;
-        dailySeq = 1;
+      if (isCurrentYear && Number.isFinite(seq) && seq >= nextSeq) {
+        nextSeq = seq + 1;
       }
     }
 
-    const newWoNumber = `WO${String(baseSeq).padStart(4, '0')}/${yearShort}-${String(dailySeq).padStart(2, '0')}`;
-    console.log('โ… เธชเธฃเนเธฒเธ WO Number เธชเธณเน€เธฃเนเธ:', newWoNumber);
-
-    return newWoNumber;
+    return `${String(nextSeq).padStart(4, '0')}/${yearShort}`;
   }
 
   async create(createWODto: CreateWODto): Promise<Wo> {
